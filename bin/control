@@ -50,9 +50,12 @@ function start {
       rm -fR $S_DIST_UNZIPPED
       unzip "$S_DIST_FILE" -d "$PLAY2_DEPLOY_PATH"
       local S_BIN_NAME=$(find $S_DIST_UNZIPPED/bin -type f | grep -v '.bat' | head -n 1)
+	  echo $S_BIN_NAME
       local S_PLAY_CRYPTO_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9_?' | head -c30)
       local S_APPLICATION_CONF=$(find $S_DIST_UNZIPPED -type f -name application.conf | head -n 1)
+	  echo $S_APPLICATION_CONF
       local S_RESOURCE_CONF=$(find $S_DIST_UNZIPPED -type f -name openshift.conf | head -n 1)
+	  echo $S_RESOURCE_CONF
       nohup $S_BIN_NAME -Duser.home=${OPENSHIFT_DATA_DIR} -Dhttp.port=8080 -Dhttp.address=${OPENSHIFT_PLAY2_IP} -Dconfig.file=${S_APPLICATION_CONF} -Dconfig.resource=${S_RESOURCE_CONF} -Dplay.crypto.secret="$S_PLAY_CRYPTO_SECRET" -Dpidfile.path=${PLAY2_PID_RUN} -DapplyEvolutions.default=true >> $OPENSHIFT_PLAY2_LOG_DIR/play.log 2>&1 &
     else
       echo "Distribution file [$S_DIST_FILE] not found, start skipped"
